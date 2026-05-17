@@ -1,4 +1,4 @@
-# Algoritmos Avancado - Aula 1
+# Algoritmos Avancado - Teoria computacional
 
 Exercicios praticos da disciplina **Algoritmos Avancado** sobre Teoria da Computacao: Sprint Planning como problema do Knapsack.
 
