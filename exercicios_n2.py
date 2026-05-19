@@ -38,9 +38,7 @@ def avaliar_solucao(individuo: List[int], tarefas: List[Dict], capacidade: int) 
     return valor
 
 
-# ---------------------------------------------------------------------------
-# Exercicio 1 - Busca Exaustiva (Brute Force)
-# ---------------------------------------------------------------------------
+# -- Ex 1: Busca Exaustiva --
 
 def busca_exaustiva(
     tarefas: List[Dict],
@@ -53,6 +51,7 @@ def busca_exaustiva(
     melhor_individuo = [0] * n
     melhor_valor = 0
 
+    # testa todas as combinacoes possiveis (0 = nao inclui, 1 = inclui)
     for combo in itertools.product([0, 1], repeat=n):
         custo = sum(tarefas[i]["custo"] for i in range(n) if combo[i] == 1)
         valor = sum(tarefas[i]["valor"] for i in range(n) if combo[i] == 1)
@@ -63,9 +62,7 @@ def busca_exaustiva(
     return melhor_individuo, melhor_valor
 
 
-# ---------------------------------------------------------------------------
-# Exercicio 2 - Heuristica Gulosa (Greedy)
-# ---------------------------------------------------------------------------
+# -- Ex 2: Greedy --
 
 def greedy_knapsack(
     tarefas: List[Dict],
@@ -79,6 +76,7 @@ def greedy_knapsack(
     individuo = [0] * n
     capacidade_restante = capacidade
 
+    # ordena pelo melhor custo-beneficio e vai adicionando enquanto cabe
     indices = sorted(
         range(n),
         key=lambda i: tarefas[i]["valor"] / tarefas[i]["custo"],
@@ -94,9 +92,7 @@ def greedy_knapsack(
     return individuo, valor_total
 
 
-# ---------------------------------------------------------------------------
-# Exercicio 3 - Analise Empirica de Complexidade
-# ---------------------------------------------------------------------------
+# -- Ex 3: Analise Empirica --
 
 def medir_complexidade(
     tamanhos: List[int],
@@ -136,13 +132,11 @@ def calcular_razoes_crescimento(tempos: Dict[int, float]) -> None:
         print(f"{n:>4} | {tempo_atual:>12.3f} | {razao_str:>8} | {2**n:>12}")
         tempo_anterior = tempo_atual
 
-    print("\nConclusao: a razao tende a ~4x quando n cresce de 2 em 2,")
-    print("pois 2^(n+2) / 2^n = 4. Isso confirma o crescimento O(2^n).")
+    print("\nConclusao: quando n sobe de 2 em 2, o tempo aproximadamente quadruplica")
+    print("(razao ~4x), o que bate com o crescimento exponencial O(2^n).")
 
 
-# ---------------------------------------------------------------------------
-# Exercicio 4 - Hill Climbing (Busca Local)
-# ---------------------------------------------------------------------------
+# -- Ex 4: Hill Climbing --
 
 def gerar_vizinhos(individuo: List[int]) -> List[List[int]]:
     """Gera todos os n vizinhos (solucoes a 1 bit de distancia)."""
@@ -190,30 +184,7 @@ def hill_climbing(
     return atual, atual_valor, n_iter
 
 
-def hill_climbing_random_restart(
-    tarefas: List[Dict],
-    capacidade: int,
-    n_restarts: int = 5,
-    max_iter: int = 1000
-) -> Tuple[List[int], int]:
-    """Hill Climbing com varios pontos de partida aleatorios."""
-    n = len(tarefas)
-    melhor_ind = [0] * n
-    melhor_val = 0
-
-    for _ in range(n_restarts):
-        inicial = [random.randint(0, 1) for _ in range(n)]
-        ind, val, _ = hill_climbing(tarefas, capacidade, solucao_inicial=inicial, max_iter=max_iter)
-        if val > melhor_val:
-            melhor_val = val
-            melhor_ind = ind
-
-    return melhor_ind, melhor_val
-
-
-# ---------------------------------------------------------------------------
-# Comparacao das abordagens
-# ---------------------------------------------------------------------------
+# -- Comparacao final --
 
 def imprimir_solucao(label: str, individuo: List[int], valor: int, tarefas: List[Dict]) -> None:
     selecionadas = [tarefas[i]["nome"] for i in range(len(individuo)) if individuo[i] == 1]
@@ -249,12 +220,10 @@ def comparar_abordagens(tarefas: List[Dict], capacidade: int) -> None:
     print(f"Gap Hill Climbing vs Otimo: {val_bf - val_hc} ({(val_bf-val_hc)/val_bf*100:.1f}%)")
 
 
-# ---------------------------------------------------------------------------
-# Main: testes e execucao
-# ---------------------------------------------------------------------------
+# -- Main --
 
 def main():
-    random.seed(42)
+    random.seed(7)
 
     # Exercicio 1
     print("\n" + "=" * 60)
@@ -287,19 +256,18 @@ def main():
     tempos = medir_complexidade([5, 8, 10, 12, 14, 16])
     calcular_razoes_crescimento(tempos)
 
-    # Desafio Ex3: comparar greedy vs brute force para n=15
-    print("\nDesafio - Greedy vs Brute Force para n=15:")
+    # desafio: comparar quanto tempo cada um leva para n=15
     tarefas_15 = [
         {"custo": random.randint(1, 10), "valor": random.randint(5, 50)}
         for _ in range(15)
     ]
     t0 = time.perf_counter()
     busca_exaustiva(tarefas_15, 30)
-    t_bf = (time.perf_counter() - t0) * 1000
+    t_bf15 = (time.perf_counter() - t0) * 1000
     t0 = time.perf_counter()
     greedy_knapsack(tarefas_15, 30)
-    t_gr = (time.perf_counter() - t0) * 1000
-    print(f"  Brute Force: {t_bf:.2f} ms | Greedy: {t_gr:.4f} ms")
+    t_gr15 = (time.perf_counter() - t0) * 1000
+    print(f"\n  n=15 -> BF: {t_bf15:.2f} ms | Greedy: {t_gr15:.4f} ms")
     print("Ex 3 OK")
 
     # Exercicio 4
@@ -327,11 +295,15 @@ def main():
     print(f"  -> valores distintos: {sorted(set(resultados_aleatorios), reverse=True)}")
     print("  -> minimos locais confirmados quando os valores diferem.")
 
-    # Desafio: random restart
-    print("\nDesafio - Hill Climbing com random restart (n_restarts=5):")
-    _, val_rr = hill_climbing_random_restart(TAREFAS, CAPACIDADE, n_restarts=5)
-    print(f"  Valor com restart: {val_rr}")
-
+    # desafio: rodar 5 vezes com inicio aleatorio e ficar com o melhor
+    print("\nRandom restart (5 tentativas):")
+    melhor_val_rr = 0
+    for _ in range(5):
+        inicio = [random.randint(0, 1) for _ in range(len(TAREFAS))]
+        _, v, _ = hill_climbing(TAREFAS, CAPACIDADE, solucao_inicial=inicio)
+        if v > melhor_val_rr:
+            melhor_val_rr = v
+    print(f"  melhor valor encontrado: {melhor_val_rr}")
     print("\nEx 4 OK")
 
     # Debrief final
