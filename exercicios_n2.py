@@ -2,7 +2,7 @@
 Teoria da Computacao - Exercicios Praticos em Python
 Sprint Planning e Otimizacao Computacional (Knapsack)
 
-Alunos: Jose Lucas Andrade Fonseca e Sidney Cardoso de Oliveira Junior
+Alunos: Eder Duarte Zerek, Jose Lucas Andrade Fonseca e Sidney Cardoso de Oliveira Junior
 Professor: Diogo Vinicius Winck
 Materia: Algoritmos Avancado
 """
