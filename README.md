@@ -3,6 +3,7 @@
 Exercicios praticos da disciplina **Algoritmos Avancado** sobre Teoria da Computacao: Sprint Planning como problema do Knapsack.
 
 ## Alunos
+- Eder Duarte Zerek
 - Jose Lucas Andrade Fonseca
 - Sidney Cardoso de Oliveira Junior
 
